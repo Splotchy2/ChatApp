@@ -1,8 +1,82 @@
 package com.chatapp;
 
 
-public class Main {
-    static void main() {
+import java.util.Scanner;
 
+public class Main {
+
+    static void main() {
+        Login login = new Login();
+        Scanner scanner = new Scanner(System.in);
+        boolean usernameValid;
+        boolean passwordValid;
+        boolean cellNumberValid;
+        String firstName;
+        String lastName;
+        String username;
+        String password;
+        String cellNumber;
+        int selectedChoice = 0;
+
+        System.out.println("please enter your first name:");
+        firstName = scanner.nextLine();
+
+        System.out.println("Please enter your last name:");
+        lastName = scanner.nextLine();
+
+
+        while (selectedChoice != 3) {
+
+            System.out.println("Please select an option below:\n" +
+                    "1. Login\n" +
+                    "2. Register\n" +
+                    "3. Exit");
+
+            selectedChoice = scanner.nextInt();
+            scanner.nextLine(); // clears the newline
+
+            switch (selectedChoice) {
+                case 1:
+                    System.out.println("Please enter your username:");
+                    username = scanner.nextLine();
+
+                    System.out.println("Please enter your password:");
+                    password = scanner.nextLine();
+
+                    login.loginUser(username, password);
+
+                    System.out.println(login.returnLoginStatus().replace("$1", firstName).replace("$2", lastName));
+                    break;
+                case 2:
+                    do {
+                        System.out.println("Please enter your username:");
+                        username = scanner.nextLine();
+
+                        usernameValid = login.checkUserName(username);
+                    } while (!usernameValid);
+
+                    do {
+                        System.out.println("Please enter your password:");
+                        password = scanner.nextLine();
+
+                        passwordValid = login.checkPasswordComplexity(password);
+                    } while (!passwordValid);
+
+                    do {
+                        System.out.println("Please enter your cell phone number (including the country code):");
+                        cellNumber = scanner.nextLine();
+
+                        cellNumberValid = login.checkCellPhoneNumber(cellNumber);
+                    } while (!cellNumberValid);
+
+                    System.out.println(login.registerUser(username, password));
+                    break;
+
+            }
+
+        }
+
+
+        scanner.close();
     }
 }
