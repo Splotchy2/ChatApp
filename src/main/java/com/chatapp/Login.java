@@ -1,9 +1,9 @@
 package com.chatapp;
 
+import java.util.ArrayList;
+
 public class Login {
 
-    private String username;
-    private String password;
     public  String loginMessage;
 
     public boolean checkUserName(String username) {
@@ -46,23 +46,27 @@ public class Login {
         passwordValid = checkPasswordComplexity(password);
 
         if (passwordValid && usernameValid) {
-            this.username = username;
-            this.password = password;
             result = "\n------User registered!------\n";
         }
 
         return result;
     }
 
-    public boolean loginUser(String username, String password) {
+    public boolean loginUser(ArrayList<Account> accounts, String username, String password) {
 
-        if (this.username.equals(username) && this.password.equals(password)) {
-            this.loginMessage = "\nWelcome $1 $2, it is great to see you again.\n";
-            return true;
-        }else {
-            this.loginMessage = "Username or password incorrect, please try again.\n";
+        for (Account a : accounts) {
+
+            if (a.getUsername().equals(username) && a.getPassword().equals(password)) {
+                this.loginMessage = "\nWelcome " + a.getFirstName() + " " + a.getLastName() + ", it is great to see you again.\n";
+
+                // in a production system, it is at this point that we would bring the user's account into focus application wide
+                return true;
+
+            }
         }
-        // in a production system, it is at this point that we would bring the user's account into focus application wide
+
+        // if we get here, we didn't have an account with those credentials. Message returned is defined by project requirement.
+        this.loginMessage = "Username or password incorrect, please try again.\n";
 
         return false;
     }
@@ -76,9 +80,9 @@ public class Login {
         String result;
 
         if (isValid) {
-            result = "Cell phone number successfully added.";
+            result = "Cell phone number successfully added.\n";
         }else {
-            result = "Cell phone number incorrectly formatted or does not contain international code.";
+            result = "Cell phone number incorrectly formatted or does not contain international code.\n";
         }
 
         System.out.println(result);

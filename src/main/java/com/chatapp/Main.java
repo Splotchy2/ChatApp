@@ -1,9 +1,12 @@
 package com.chatapp;
 
 
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
+    static ArrayList<Account> accounts = new ArrayList<>();
 
     static void main() {
         Login login = new Login();
@@ -11,18 +14,13 @@ public class Main {
         boolean usernameValid;
         boolean passwordValid;
         boolean cellNumberValid;
-        String firstName;
-        String lastName;
+        String firstName = "";
+        String lastName = "";
         String username;
         String password;
         String cellNumber;
         int selectedChoice = 0;
 
-        System.out.println("please enter your first name:");
-        firstName = scanner.nextLine();
-
-        System.out.println("Please enter your last name:");
-        lastName = scanner.nextLine();
 
 
         while (selectedChoice != 3) {
@@ -40,19 +38,43 @@ public class Main {
                     System.out.println("Please enter your username:");
                     username = scanner.nextLine();
 
+                    String tempUsername = username;
+                    Optional<Account> user = accounts.stream()
+                            .filter(p -> tempUsername.equals(p.getUsername()))
+                            .findFirst();
+
+                    if (user.isEmpty()) {
+                        System.out.println("Username not found, please register first!\n");
+                        break;
+                    }
+
                     System.out.println("Please enter your password:");
                     password = scanner.nextLine();
 
-                    login.loginUser(username, password);
-
+                    login.loginUser(accounts, username, password);
                     System.out.println(login.returnLoginStatus().replace("$1", firstName).replace("$2", lastName));
+
+
                     break;
                 case 2:
+                    System.out.println("please enter your first name:");
+                    firstName = scanner.nextLine();
+
+                    System.out.println("Please enter your last name:");
+                    lastName = scanner.nextLine();
+
                     do {
                         System.out.println("Please enter your username:");
                         username = scanner.nextLine();
 
                         usernameValid = login.checkUserName(username);
+
+                        for (Account a : accounts) {
+                            if (a.getUsername().equals(username)) {
+                                System.out.println("Username already exists! Please try again!");
+                                usernameValid = false;
+                            }
+                        }
                     } while (!usernameValid);
 
                     do {
@@ -69,8 +91,13 @@ public class Main {
                         cellNumberValid = login.checkCellPhoneNumber(cellNumber);
                     } while (!cellNumberValid);
 
+
                     System.out.println(login.registerUser(username, password));
+                    accounts.add(new Account(firstName, lastName, username, password, cellNumber));
+
                     break;
+                case 3:
+                    System.out.println("Come back soon!");
 
             }
 
