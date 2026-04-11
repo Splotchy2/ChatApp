@@ -57,7 +57,7 @@ public class Main {
 
                     break;
                 case 2:
-                    System.out.println("please enter your first name:");
+                    System.out.println("Please enter your first name:");
                     firstName = scanner.nextLine();
 
                     System.out.println("Please enter your last name:");

@@ -1,0 +1,11 @@
+*.class
+.idea/vcs.xml
+*.class
+target/classes/com/chatapp/Main.class
+*.txt
+target/surefire-reports/com.chatapp.MainTest.txt
+target/surefire-reports/TEST-com.chatapp.LoginTest.xml
+target/surefire-reports/TEST-com.chatapp.MainTest.xml
+target/surefire-reports/TEST-com.chatapp.MainTest.xml
+target/surefire-reports/com.chatapp.MainTest.txt
+*.class
