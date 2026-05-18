@@ -21,8 +21,6 @@ public class Main {
         String cellNumber;
         int selectedChoice = 0;
 
-
-
         while (selectedChoice != 3) {
 
             System.out.println("Please select an option below:\n" +

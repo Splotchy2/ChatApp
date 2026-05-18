@@ -1,13 +1,8 @@
 package com.chatapp;
 
 import org.junit.jupiter.api.Test;
-
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MainTest {
-
-    @Test
-    void main() {
-        assertNotEquals(1, 2, "They are not equal!");
-    }
+public class MessageTest {
 }
