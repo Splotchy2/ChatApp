@@ -12,6 +12,7 @@ public class Main {
         Login login = new Login();
         Scanner scanner = new Scanner(System.in);
         boolean usernameValid;
+        boolean userLoggedIn;
         boolean passwordValid;
         boolean cellNumberValid;
         String firstName = "";
@@ -49,8 +50,33 @@ public class Main {
                     System.out.println("Please enter your password:");
                     password = scanner.nextLine();
 
-                    login.loginUser(accounts, username, password);
+                    userLoggedIn = login.loginUser(accounts, username, password);
                     System.out.println(login.returnLoginStatus().replace("$1", firstName).replace("$2", lastName));
+
+                    if (userLoggedIn) {
+                        System.out.println("Welcome to Quick Chat.");
+
+
+                        while (selectedChoice != 3) {
+                            System.out.println("Please select an option below:\n" +
+                                    "1. Send Messages\n" +
+                                    "2. Show recently sent messages\n" +
+                                    "3. Quit");
+
+                            selectedChoice = scanner.nextInt();
+                            scanner.nextLine(); // clears the newline
+
+                            switch(selectedChoice) {
+                                case 1:
+                                    break;
+                                case 2:
+                                    break;
+                                case 3:
+                                    break;
+                            }
+
+                        }
+                    }
 
 
                     break;
