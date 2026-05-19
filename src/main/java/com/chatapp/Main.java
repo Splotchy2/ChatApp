@@ -59,7 +59,7 @@ public class Main {
                     System.out.println(login.returnLoginStatus().replace("$1", firstName).replace("$2", lastName));
 
                     if (userLoggedIn) {
-                        System.out.println("Welcome to Quick Chat./n");
+                        System.out.println("Welcome to Quick Chat.\n");
 
 
                         while (selectedChoice != 3) {
@@ -76,6 +76,7 @@ public class Main {
                                 case 1:
                                     System.out.println("Please enter the number of messages you wish to send:");
                                     numberOfMessagesSent = scanner.nextInt();
+                                    scanner.nextLine();
 
                                     for(int i = 0; i <= numberOfMessagesSent; i++) {
 
@@ -86,7 +87,7 @@ public class Main {
 
                                         //gather and validate user input, if valid, set message values
                                         do {
-                                            System.out.println("Please enter the recipient cell:/n");
+                                            System.out.println("Please enter the recipient cell:");
                                             cellNumber = scanner.nextLine();
 
                                             cellNumberValid = login.checkCellPhoneNumber(cellNumber);
@@ -95,7 +96,7 @@ public class Main {
                                         message.setRecipientCell(cellNumber);
 
                                         do {
-                                            System.out.println("Please enter the recipient cell:/n");
+                                            System.out.println("Please enter the message body:");
                                             messageBody = scanner.nextLine();
 
                                             messageBodyValid = message.checkMessageBody(messageBody);
@@ -109,7 +110,7 @@ public class Main {
 
                                     break;
                                 case 2:
-                                    System.out.println("Coming soon");
+                                    System.out.println("Coming soon!\n");
                                     break;
                                 case 3:
                                     System.out.println("Exiting!");
