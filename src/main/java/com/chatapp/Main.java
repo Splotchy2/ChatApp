@@ -11,7 +11,7 @@ public class Main {
     static void main() {
         // variable declaration
         Login login = new Login();
-        Message message = new Message();
+        Message utilityMessage = new Message();
         Scanner scanner = new Scanner(System.in);
         boolean usernameValid;
         boolean userLoggedIn;
@@ -61,7 +61,6 @@ public class Main {
                     if (userLoggedIn) {
                         System.out.println("Welcome to Quick Chat.\n");
 
-
                         while (selectedChoice != 3) {
                             System.out.println("Please select an option below:\n" +
                                     "1. Send Messages\n" +
@@ -74,39 +73,41 @@ public class Main {
 
                             switch(selectedChoice) {
                                 case 1:
+                                    utilityMessage.clearValues();
                                     System.out.println("Please enter the number of messages you wish to send:");
                                     numberOfMessagesSent = scanner.nextInt();
                                     scanner.nextLine();
 
-                                    for(int i = 0; i <= numberOfMessagesSent; i++) {
+                                    for(int i = 1; i <= numberOfMessagesSent; i++) {
 
-                                        if(i == numberOfMessagesSent) {
-                                            System.out.println("You have sent the maximum number of messages you selected to send.");
-                                            break;
-                                        }
+                                        Message newMessage = new Message();
 
                                         //gather and validate user input, if valid, set message values
                                         do {
-                                            System.out.println("Please enter the recipient cell:");
+                                            System.out.println("Please enter the recipient cell for message " + i + ":");
                                             cellNumber = scanner.nextLine();
 
                                             cellNumberValid = login.checkCellPhoneNumber(cellNumber);
                                         } while (!cellNumberValid);
 
-                                        message.setRecipientCell(cellNumber);
+                                        newMessage.setRecipientCell(cellNumber);
 
                                         do {
-                                            System.out.println("Please enter the message body:");
+                                            System.out.println("Please enter the message body for message " + i + ":");
                                             messageBody = scanner.nextLine();
 
-                                            messageBodyValid = message.checkMessageBody(messageBody);
-                                        } while(messageBodyValid);
+                                            messageBodyValid = newMessage.checkMessageBody(messageBody);
+                                        } while(!messageBodyValid);
 
-                                        message.setMessageBody(messageBody);
+                                        System.out.println("\nDetails Captured!\n");
 
+                                        newMessage.setSenderCell(accounts.getFirst().getCellnumber());
+                                        newMessage.setMessageBody(messageBody);
+                                        utilityMessage.initializeMessage(newMessage);
+                                        System.out.println(utilityMessage.sendMessage(newMessage));
                                     }
-                                    //check the local message object's number of sent messages, if equal, leave
-
+                                    //TODO: make each message print out its own details after each one is sent, not all at once afterward
+                                    utilityMessage.printMessages();
 
                                     break;
                                 case 2:
