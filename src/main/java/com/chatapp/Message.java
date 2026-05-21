@@ -62,9 +62,9 @@ public class Message {
         String result;
 
         if (isValid) {
-            result = "Cell phone number successfully added.\n";
+            result = "Cell phone number successfully captured.\n";
         }else {
-            result = "Cell phone number incorrectly formatted or does not contain international code.\n";
+            result = "Cell phone number incorrectly formatted or does not contain an international code. Please correct the number and try again.\n";
         }
 
         return result;
@@ -74,13 +74,17 @@ public class Message {
     // This ensures better security and good design architecture, but we are leaving it public for testing with unit tests
     public void createMessageHash(Message newMessage) {
         // This method creates and returns the Message hash
+        String firstWord = newMessage.messageBody.toUpperCase().substring(0, newMessage.messageBody.indexOf(" ")).replaceAll("[^a-zA-Z0-9]", "");
+        String lastWord = newMessage.messageBody.toUpperCase().substring(newMessage.messageBody.lastIndexOf(" ") + 1).replaceAll("[^a-zA-Z0-9]", "");
         StringBuilder sb = new StringBuilder();
         sb.append(String.valueOf(newMessage.messageID), 0, 2);
         sb.append(":");
-        sb.append(this.numberOfMessagesSent + 1);
+        sb.append(this.numberOfMessagesSent);
         sb.append(":");
-        sb.append(newMessage.messageBody.toUpperCase(), 0, newMessage.messageBody.indexOf(" "));
-        sb.append(newMessage.messageBody.substring(newMessage.messageBody.lastIndexOf(" ") + 1).toUpperCase());
+        sb.append(firstWord);
+        sb.append(lastWord);
+        //sb.append(newMessage.messageBody.toUpperCase(), 0, newMessage.messageBody.indexOf(" "));
+        //sb.append(newMessage.messageBody.substring(newMessage.messageBody.lastIndexOf(" ") + 1).toUpperCase());
 
         newMessage.messageHash = sb.toString();
 
@@ -107,7 +111,7 @@ public class Message {
                 newMessage.numberOfMessagesSent = this.numberOfMessagesSent; // Sets the number of messages on the object we pass in, java is pass-by-reference for objects
                 this.sentMessages.add(newMessage);
 
-                result = "Message successfully sent.\n";
+                result = "Message successfully sent.";
                 break;
             case 2:
                 System.out.println("Press 0 to delete the message.\n");
@@ -148,6 +152,21 @@ public class Message {
         return "";
     }
 
+    // this method satisfies requirement 7, not sure why we'd have this and the method above but anyway...
+    public String displaySentMessage(Message newMessage) {
+        // This method returns all the messages sent whilst the program is running.
+
+        System.out.println("====================="); // separator for readability
+        System.out.println("Message ID: "        + newMessage.messageID);
+        System.out.println("Message Hash: "      + newMessage.messageHash);
+        System.out.println("Message Recipient: " + newMessage.recipientCell);
+        System.out.println("Message Body: "      + newMessage.messageBody);
+
+        System.out.println("=====================\n"); // again a separator
+        return "";
+    }
+
+
     public int returnTotalMessages() {
         // This method returns the total number of messages sent
 
@@ -167,10 +186,9 @@ public class Message {
 
     public boolean checkMessageBody(String messageBody) {
 
-        System.out.println("Number of chars = " + messageBody.length());
-
         if(messageBody.length() > 250) {
-            System.out.println("Please enter a message of less than 250 characters.");
+            // requirement of class method and unit test clash, went with the unit test output
+            System.out.println("Message exceeds 250 characters by " + (messageBody.length() - 250) + "; please reduce the size.");
             return false;
         }else {
             return true;
@@ -209,5 +227,13 @@ public class Message {
 
     public void setSenderCell(String senderCell) {
         this.senderCell = senderCell;
+    }
+
+    public String getMessageBody() {
+        return this.messageBody;
+    }
+
+    public String getMessageStatus() {
+        return this.messageStatus;
     }
 }

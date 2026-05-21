@@ -22,7 +22,8 @@ public class Main {
         String lastName = "";
         String username;
         String password;
-        String cellNumber;
+        String cellNumber = "";
+        String senderCellNumber;
         String messageBody;
         int selectedChoice = 0;
         int numberOfMessagesSent = 0;
@@ -77,6 +78,7 @@ public class Main {
                                     System.out.println("Please enter the number of messages you wish to send:");
                                     numberOfMessagesSent = scanner.nextInt();
                                     scanner.nextLine();
+                                    senderCellNumber = cellNumber; // keep track of sender cell and reuse objects for efficiency.
 
                                     for(int i = 1; i <= numberOfMessagesSent; i++) {
 
@@ -101,13 +103,14 @@ public class Main {
 
                                         System.out.println("\nDetails Captured!\n");
 
-                                        newMessage.setSenderCell(accounts.getFirst().getCellnumber());
+                                        newMessage.setSenderCell(senderCellNumber);
                                         newMessage.setMessageBody(messageBody);
                                         utilityMessage.initializeMessage(newMessage);
                                         System.out.println(utilityMessage.sendMessage(newMessage));
+                                        utilityMessage.displaySentMessage(newMessage);
                                     }
-                                    //TODO: make each message print out its own details after each one is sent, not all at once afterward
-                                    utilityMessage.printMessages();
+
+                                    System.out.println("Total messages sent: " + utilityMessage.numberOfMessagesSent + "\n");
 
                                     break;
                                 case 2:
