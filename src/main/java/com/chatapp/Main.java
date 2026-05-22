@@ -106,8 +106,7 @@ public class Main {
                                         newMessage.setSenderCell(senderCellNumber);
                                         newMessage.setMessageBody(messageBody);
                                         utilityMessage.initializeMessage(newMessage);
-                                        System.out.println(utilityMessage.sendMessage(newMessage));
-                                        utilityMessage.displaySentMessage(newMessage);
+                                        System.out.println(utilityMessage.sendMessage(newMessage, 0));
                                     }
 
                                     System.out.println("Total messages sent: " + utilityMessage.numberOfMessagesSent + "\n");

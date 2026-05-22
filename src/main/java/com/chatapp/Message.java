@@ -22,10 +22,6 @@ public class Message {
     }
 
     public void initializeMessage(Message newMessage) {
-
-        System.out.println("Message recipient = " + newMessage.recipientCell);
-        System.out.println("Message body = " + newMessage.messageBody + "\n");
-
         createMessageID(newMessage);
         createMessageHash(newMessage);
     }
@@ -37,12 +33,14 @@ public class Message {
 
     public String createMessageID(Message newMessage) {
         Random random = new Random();
+        String result;
         // nextLong() gives a value across the entire long range, so we use a bound
         long randomNum = (long) Math.abs((random.nextDouble() * 9_000_000_000L) + 1_000_000_000L);
 
         newMessage.messageID = randomNum;
+        result = "Message ID generated: " + randomNum;
 
-        return "Message ID generated: " + randomNum;
+        return result;
     }
 
     public boolean checkMessageID() {
@@ -90,20 +88,23 @@ public class Message {
 
     }
 
-    public String sendMessage(Message newMessage) {
+    public String sendMessage(Message newMessage, int option) {
         // This method should allow the user to choose if they want to send, store, or disregard the message.
 
         int selectedChoice;
         String result = "";
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Please select an option below:\n" +
-                "1. Send Message\n" +
-                "2. Disregard Message\n" +
-                "3. Store Message to send later");
+        if (option != 0) {
+            selectedChoice = option;
+        } else {
+            System.out.println("Please select an option below:\n" +
+                    "1. Send Message\n" +
+                    "2. Disregard Message\n" +
+                    "3. Store Message to send later");
 
-        selectedChoice = scanner.nextInt();
-
+            selectedChoice = scanner.nextInt();
+        }
         switch (selectedChoice) {
             case 1:
                 newMessage.messageStatus = "Sent";
@@ -111,12 +112,13 @@ public class Message {
                 newMessage.numberOfMessagesSent = this.numberOfMessagesSent; // Sets the number of messages on the object we pass in, java is pass-by-reference for objects
                 this.sentMessages.add(newMessage);
 
+                this.displaySentMessage(newMessage);
                 result = "Message successfully sent.";
                 break;
             case 2:
                 System.out.println("Press 0 to delete the message.\n");
                 result = "Press 0 to delete the message.\n"; // this line is to satisfy the requirement...
-                selectedChoice = scanner.nextInt();
+                selectedChoice = option != 0 ? option : scanner.nextInt();
 
                 if (selectedChoice == 0) {
                     newMessage.messageStatus = "Disregarded.\n";
