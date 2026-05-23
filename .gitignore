@@ -10,3 +10,9 @@ target/surefire-reports/com.chatapp.MainTest.txt
 target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
 
 *.class
+*.json
+*.xml
+*.lst
+*.dump
+*.dumpstream
+*.jar

@@ -34,7 +34,7 @@ public class Message {
     public String createMessageID(Message newMessage) {
         Random random = new Random();
         String result;
-        // nextLong() gives a value across the entire long range, so we use a bound
+        // nextLong() gives a value across the entire long range, so we use a bound, this will ensure it's a random 10 digit number
         long randomNum = (long) Math.abs((random.nextDouble() * 9_000_000_000L) + 1_000_000_000L);
 
         newMessage.messageID = randomNum;
@@ -81,8 +81,6 @@ public class Message {
         sb.append(":");
         sb.append(firstWord);
         sb.append(lastWord);
-        //sb.append(newMessage.messageBody.toUpperCase(), 0, newMessage.messageBody.indexOf(" "));
-        //sb.append(newMessage.messageBody.substring(newMessage.messageBody.lastIndexOf(" ") + 1).toUpperCase());
 
         newMessage.messageHash = sb.toString();
 
@@ -117,7 +115,7 @@ public class Message {
                 break;
             case 2:
                 System.out.println("Press 0 to delete the message.\n");
-                result = "Press 0 to delete the message.\n"; // this line is to satisfy the requirement...
+                result = "Press 0 to delete the message.\n"; // this line is to satisfy requirement...
                 selectedChoice = option != 0 ? option : scanner.nextInt();
 
                 if (selectedChoice == 0) {

@@ -78,7 +78,7 @@ public class Main {
                                     System.out.println("Please enter the number of messages you wish to send:");
                                     numberOfMessagesSent = scanner.nextInt();
                                     scanner.nextLine();
-                                    senderCellNumber = cellNumber; // keep track of sender cell and reuse objects for efficiency.
+                                    senderCellNumber = accounts.getFirst().cellnumber; // keep track of sender cell and reuse objects for efficiency.
 
                                     for(int i = 1; i <= numberOfMessagesSent; i++) {
 
