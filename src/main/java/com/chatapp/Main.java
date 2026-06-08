@@ -62,11 +62,12 @@ public class Main {
                     if (userLoggedIn) {
                         System.out.println("Welcome to Quick Chat.\n");
 
-                        while (selectedChoice != 3) {
+                        while (selectedChoice != 4) {
                             System.out.println("Please select an option below:\n" +
                                     "1. Send Messages\n" +
                                     "2. Show recently sent messages\n" +
-                                    "3. Quit");
+                                    "3. Stored Messages\n" +
+                                    "4. Quit");
 
                             selectedChoice = scanner.nextInt();
                             scanner.nextLine(); // clears the newline
@@ -113,9 +114,85 @@ public class Main {
 
                                     break;
                                 case 2:
-                                    System.out.println("Coming soon!\n");
+                                    System.out.println("Displaying all sent messages:\n");
+                                    utilityMessage.printMessages();
                                     break;
                                 case 3:
+                                    while (selectedChoice != 6) {
+                                        System.out.println("Please select an option below:\n" +
+                                                "1. Display the sender and recipient of all stored messages\n" +
+                                                "2. Display the longest message\n" +
+                                                "3. Search for a message\n" +
+                                                "4. Search for all messages for a particular recipient\n" +
+                                                "5. Delete a message\n" +
+                                                "6. Quit");
+
+                                        selectedChoice = scanner.nextInt();
+                                        long messageID = 0;
+
+                                        switch (selectedChoice) {
+                                            case 1:
+                                                break;
+                                            case 2:
+                                                break;
+                                            case 3:
+                                                System.out.println("Please enter the message ID to search for:");
+                                                messageID = scanner.nextInt();
+
+                                                for (Message message : utilityMessage.sentMessages) {
+                                                    if (message.getMessageID() == messageID) {
+                                                        System.out.println("Recipient: " + message.getRecipientCell());
+                                                        System.out.println("Message Body: " + message.getMessageBody() + "\n");
+                                                    }
+                                                }
+
+                                                break;
+                                            case 4:
+                                                String recipientCell;
+
+                                                //gather and validate user input, if valid, set message values
+                                                do {
+                                                    System.out.println("Please enter the recipient cell for message:");
+                                                    recipientCell = scanner.nextLine();
+
+                                                    cellNumberValid = login.checkCellPhoneNumber(cellNumber);
+                                                } while (!cellNumberValid);
+
+                                                for (Message message : utilityMessage.sentMessages) {
+                                                    if (message.getRecipientCell().equals(recipientCell)) {
+                                                        System.out.println(message.getMessageBody());
+                                                    }
+                                                }
+
+                                                // do stored messages too
+
+                                                break;
+                                            case 5:
+                                                System.out.println("Please enter the message hash to delete:");
+                                                String messageHash = scanner.nextLine();
+                                                String indexesToRemove = "";
+
+                                                for (Message message : utilityMessage.sentMessages) {
+                                                    if (message.getMessageHash().equals(messageHash)) indexesToRemove = indexesToRemove + "," + utilityMessage.sentMessages.indexOf(message);
+                                                }
+
+                                                indexesToRemove = indexesToRemove.replaceFirst(",", "");
+                                                int[] indexes = indexesToRemove.split(",");
+
+                                                // this will avoid the ConcurrentModificationExcpetion if we had tried to remove the elements in the loop above
+                                                for (int i = 0 ; i <= indexes.length - 1 ; i++) {
+                                                    utilityMessage.sentMessages.remove(indexes[i]);
+                                                }
+
+                                                // do the same for stored messages
+
+                                                break;
+                                        }
+                                    }
+
+
+                                    break;
+                                case 4:
                                     System.out.println("Exiting!");
                                     break;
                             }

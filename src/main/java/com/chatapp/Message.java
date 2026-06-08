@@ -14,7 +14,11 @@ public class Message {
     public String recipientCell;
     public String senderCell;
     public String messageHash;
-    public ArrayList<Message> sentMessages = new ArrayList<>();
+    public ArrayList<Message> sentMessages        = new ArrayList<>();
+    public ArrayList<Message> disregardedMessages = new ArrayList<>();
+    public ArrayList<Message> storedMessages      = new ArrayList<>();
+    public ArrayList<String> messageHashes        = new ArrayList<>();
+    public ArrayList<Long> messageIDs             = new ArrayList<>();
     public String messageStatus; // this will hold a value determining if a message was sent, is a draft etc
 
     public Message() {
@@ -38,6 +42,8 @@ public class Message {
         long randomNum = (long) Math.abs((random.nextDouble() * 9_000_000_000L) + 1_000_000_000L);
 
         newMessage.messageID = randomNum;
+        this.messageIDs.add(newMessage.messageID);
+
         result = "Message ID generated: " + randomNum;
 
         return result;
@@ -82,7 +88,9 @@ public class Message {
         sb.append(firstWord);
         sb.append(lastWord);
 
+
         newMessage.messageHash = sb.toString();
+        this.messageHashes.add(newMessage.messageHash);
 
     }
 
@@ -120,6 +128,7 @@ public class Message {
 
                 if (selectedChoice == 0) {
                     newMessage.messageStatus = "Disregarded.\n";
+                    this.disregardedMessages.add(newMessage);
                 }
                 break;
             case 3:
