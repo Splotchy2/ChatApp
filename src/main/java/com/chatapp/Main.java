@@ -177,11 +177,11 @@ public class Main {
                                                 }
 
                                                 indexesToRemove = indexesToRemove.replaceFirst(",", "");
-                                                int[] indexes = indexesToRemove.split(",");
+                                                String[] indexes = indexesToRemove.split(",");
 
                                                 // this will avoid the ConcurrentModificationExcpetion if we had tried to remove the elements in the loop above
                                                 for (int i = 0 ; i <= indexes.length - 1 ; i++) {
-                                                    utilityMessage.sentMessages.remove(indexes[i]);
+                                                    utilityMessage.sentMessages.remove(Integer.parseInt(indexes[i]));
                                                 }
 
                                                 // do the same for stored messages
