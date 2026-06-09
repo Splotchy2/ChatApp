@@ -2,6 +2,9 @@ package com.chatapp;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -146,7 +149,7 @@ public class Message {
         return result;
     }
 
-    public String printMessages() {
+    public String printSentMessages() {
         // This method returns all the messages sent whilst the program is running.
 
         for (int i = 0; i <= sentMessages.size() - 1; i++) {
@@ -193,6 +196,25 @@ public class Message {
         return false;
     }
 
+    private void loadStoredMessages() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            File dir = new File(".");
+            for (File file : dir.listFiles()) {
+                if (file.isFile()) {
+                    if (file.getName().substring(file.getName().indexOf(".") + 1).equals("json")) {
+                        Message storedMessage = mapper.readValue(file, Message.class);
+
+                        this.storedMessages.add(storedMessage);
+                    }
+                }
+            }
+        }catch (IOException e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+        }
+    }
+
     public boolean checkMessageBody(String messageBody) {
 
         if(messageBody.length() > 250) {
@@ -202,6 +224,95 @@ public class Message {
         }else {
             return true;
         }
+    }
+
+    public String getLongestStoredMessage() {
+        String result;
+        int length;
+        int max = 0;
+        int index = 0;
+
+        loadStoredMessages();
+
+        for (Message message : this.storedMessages) {
+            length = message.getMessageBody().length();
+
+            if (length > max) {
+                max = length;
+                index  = storedMessages.indexOf(message);
+            }
+        }
+
+        result = storedMessages.get(index).getMessageBody();
+
+        return result;
+    }
+
+    public void displayStoredMessageData() {
+        loadStoredMessages();
+
+        for (Message message : this.storedMessages) {
+            System.out.println(message.getSenderCell());
+            System.out.println(message.getRecipientCell());
+        }
+    }
+
+    public void displayStoredReport() {
+        loadStoredMessages();
+
+        for (Message message : this.storedMessages) {
+            System.out.println("Message Hash: "      + message.getMessageHash());
+            System.out.println("Message Recipient: " + message.getRecipientCell());
+            System.out.println("Message Hash: "      + message.getMessageBody());
+        }
+    }
+
+    public String searchForMessage(long messageID) {
+        String result = "";
+
+        for (Message message : this.sentMessages) {
+            if (message.getMessageID() == messageID) {
+                System.out.println("Recipient: " + message.getRecipientCell());
+                System.out.println("Message Body: " + message.getMessageBody() + "\n");
+
+                // print out the required values above and return the value indicated by the unit test requirement
+                result = message.getMessageBody();
+            }
+        }
+
+        return result;
+    }
+
+    public String getMessagesForRecipient(String recipientCell) {
+
+        loadStoredMessages();
+
+        String result = "";
+        for (Message message : this.storedMessages) {
+            if (message.getRecipientCell().equals(recipientCell)) {
+                result = result + " " + message.getMessageBody();
+                System.out.println(message.getMessageBody());
+            }
+        }
+
+        return result;
+    }
+
+    public String deleteMessageByHash(String messageHash) {
+        int indexToRemove = 0;
+        String result = "";
+
+        loadStoredMessages();
+
+        for (Message message : this.storedMessages) {
+            if (message.getMessageHash().equals(messageHash)) indexToRemove = this.storedMessages.indexOf(message);
+        }
+
+        result = "Message: " + this.storedMessages.get(indexToRemove).getMessageBody() + " successfully deleted.";
+        this.storedMessages.remove(indexToRemove);
+
+
+        return result;
     }
 
     public long getMessageID() {

@@ -115,7 +115,7 @@ public class Main {
                                     break;
                                 case 2:
                                     System.out.println("Displaying all sent messages:\n");
-                                    utilityMessage.printMessages();
+                                    utilityMessage.printSentMessages();
                                     break;
                                 case 3:
                                     while (selectedChoice != 6) {
@@ -132,19 +132,19 @@ public class Main {
 
                                         switch (selectedChoice) {
                                             case 1:
+                                                System.out.println("Displaying sender and recipient for all stored messages:\n");
+                                                utilityMessage.displayStoredMessageData(); // very long yes apologies haha
                                                 break;
                                             case 2:
+                                                System.out.println("The longest stored message is:\n");
+
+                                                utilityMessage.getLongestStoredMessage();
                                                 break;
                                             case 3:
                                                 System.out.println("Please enter the message ID to search for:");
                                                 messageID = scanner.nextInt();
 
-                                                for (Message message : utilityMessage.sentMessages) {
-                                                    if (message.getMessageID() == messageID) {
-                                                        System.out.println("Recipient: " + message.getRecipientCell());
-                                                        System.out.println("Message Body: " + message.getMessageBody() + "\n");
-                                                    }
-                                                }
+                                                utilityMessage.searchForMessage(messageID);
 
                                                 break;
                                             case 4:
@@ -158,39 +158,22 @@ public class Main {
                                                     cellNumberValid = login.checkCellPhoneNumber(cellNumber);
                                                 } while (!cellNumberValid);
 
-                                                for (Message message : utilityMessage.sentMessages) {
-                                                    if (message.getRecipientCell().equals(recipientCell)) {
-                                                        System.out.println(message.getMessageBody());
-                                                    }
-                                                }
-
-                                                // do stored messages too
+                                                utilityMessage.getMessagesForRecipient(recipientCell);
 
                                                 break;
                                             case 5:
                                                 System.out.println("Please enter the message hash to delete:");
                                                 String messageHash = scanner.nextLine();
-                                                String indexesToRemove = "";
 
-                                                for (Message message : utilityMessage.sentMessages) {
-                                                    if (message.getMessageHash().equals(messageHash)) indexesToRemove = indexesToRemove + "," + utilityMessage.sentMessages.indexOf(message);
-                                                }
-
-                                                indexesToRemove = indexesToRemove.replaceFirst(",", "");
-                                                String[] indexes = indexesToRemove.split(",");
-
-                                                // this will avoid the ConcurrentModificationExcpetion if we had tried to remove the elements in the loop above
-                                                for (int i = 0 ; i <= indexes.length - 1 ; i++) {
-                                                    utilityMessage.sentMessages.remove(Integer.parseInt(indexes[i]));
-                                                }
-
-                                                // do the same for stored messages
+                                                utilityMessage.deleteMessageByHash(messageHash);
+                                                break;
+                                            case 6:
+                                                System.out.println("Displaying stored message report:\n");
+                                                utilityMessage.displayStoredReport();
 
                                                 break;
                                         }
                                     }
-
-
                                     break;
                                 case 4:
                                     System.out.println("Exiting!");
