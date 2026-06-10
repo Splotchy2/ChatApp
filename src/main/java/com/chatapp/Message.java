@@ -23,6 +23,7 @@ public class Message {
     public ArrayList<String> messageHashes        = new ArrayList<>();
     public ArrayList<Long> messageIDs             = new ArrayList<>();
     public String messageStatus; // this will hold a value determining if a message was sent, is a draft etc
+    private boolean messagesLoaded;
 
     public Message() {
 
@@ -151,17 +152,25 @@ public class Message {
 
     public String printSentMessages() {
         // This method returns all the messages sent whilst the program is running.
+        String result = "";
 
-        for (int i = 0; i <= sentMessages.size() - 1; i++) {
+        for (int i = 0; i <= this.sentMessages.size() - 1; i++) {
             System.out.println("====================="); // separator for readability
-            System.out.println("Message ID: "        + sentMessages.get(i).messageID);
-            System.out.println("Message Hash: "      + sentMessages.get(i).messageHash);
-            System.out.println("Message Recipient: " + sentMessages.get(i).recipientCell);
-            System.out.println("Message Body: "      + sentMessages.get(i).messageBody);
+            System.out.println("Message ID: "        + this.sentMessages.get(i).messageID);
+            System.out.println("Message Hash: "      + this.sentMessages.get(i).messageHash);
+            System.out.println("Message Recipient: " + this.sentMessages.get(i).recipientCell);
+            System.out.println("Message Body: "      + this.sentMessages.get(i).messageBody);
+
+            if (!result.isEmpty()) {
+                result = result + "," + this.sentMessages.get(i).getMessageBody();
+            }else {
+                result = this.sentMessages.get(i).getMessageBody();
+            }
+
         }
 
         System.out.println("=====================\n"); // again a separator
-        return "";
+        return result;
     }
 
     // this method satisfies requirement 7, not sure why we'd have this and the method above but anyway...
@@ -206,13 +215,17 @@ public class Message {
                     if (file.getName().substring(file.getName().indexOf(".") + 1).equals("json")) {
                         Message storedMessage = mapper.readValue(file, Message.class);
 
-                        this.storedMessages.add(storedMessage);
+                        if (!this.storedMessages.contains(storedMessage)) {
+                            this.storedMessages.add(storedMessage);
+                        }
                     }
                 }
             }
         }catch (IOException e) {
             System.out.println("Exception occurred: " + e.getMessage());
         }
+
+        messagesLoaded = true;
     }
 
     public boolean checkMessageBody(String messageBody) {
@@ -228,17 +241,18 @@ public class Message {
 
     public String getLongestStoredMessage() {
         String result;
-        int length;
+        int length = 0;
         int max = 0;
         int index = 0;
 
-        loadStoredMessages();
+        if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
             length = message.getMessageBody().length();
 
             if (length > max) {
                 max = length;
+
                 index  = storedMessages.indexOf(message);
             }
         }
@@ -249,30 +263,36 @@ public class Message {
     }
 
     public void displayStoredMessageData() {
-        loadStoredMessages();
+        if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
-            System.out.println(message.getSenderCell());
-            System.out.println(message.getRecipientCell());
+            System.out.println("========");
+            System.out.println("Sender: "    + message.getSenderCell());
+            System.out.println("Recipient: " + message.getRecipientCell());
+            System.out.println("========/n");
         }
     }
 
     public void displayStoredReport() {
-        loadStoredMessages();
+        if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
+            System.out.println("============");
             System.out.println("Message Hash: "      + message.getMessageHash());
             System.out.println("Message Recipient: " + message.getRecipientCell());
             System.out.println("Message Hash: "      + message.getMessageBody());
+            System.out.println("============\n");
         }
     }
 
     public String searchForMessage(long messageID) {
         String result = "";
 
-        for (Message message : this.sentMessages) {
+        if (!messagesLoaded) loadStoredMessages();
+
+        for (Message message : this.storedMessages) {
             if (message.getMessageID() == messageID) {
-                System.out.println("Recipient: " + message.getRecipientCell());
+                System.out.println("\nRecipient: " + message.getRecipientCell());
                 System.out.println("Message Body: " + message.getMessageBody() + "\n");
 
                 // print out the required values above and return the value indicated by the unit test requirement
@@ -280,37 +300,48 @@ public class Message {
             }
         }
 
+        if (result.isEmpty()) result = "Unable to find message with ID: " + messageID;
+
         return result;
     }
 
     public String getMessagesForRecipient(String recipientCell) {
 
-        loadStoredMessages();
+        if (!messagesLoaded) loadStoredMessages();
 
         String result = "";
         for (Message message : this.storedMessages) {
             if (message.getRecipientCell().equals(recipientCell)) {
-                result = result + " " + message.getMessageBody();
-                System.out.println(message.getMessageBody());
+                if (!result.isEmpty()) {
+                    result = result + " " + message.getMessageBody();
+                }else {
+                    result = message.getMessageBody();
+                }
+                System.out.println("\n" + message.getMessageBody());
             }
         }
+
+        if (result.isEmpty()) result = "No messages found for recipient: " + recipientCell;
 
         return result;
     }
 
     public String deleteMessageByHash(String messageHash) {
-        int indexToRemove = 0;
+        int indexToRemove = -1;
         String result = "";
 
-        loadStoredMessages();
+        if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
             if (message.getMessageHash().equals(messageHash)) indexToRemove = this.storedMessages.indexOf(message);
         }
 
-        result = "Message: " + this.storedMessages.get(indexToRemove).getMessageBody() + " successfully deleted.";
-        this.storedMessages.remove(indexToRemove);
-
+        if (indexToRemove >= 0) {
+            result = "Message: \"" + this.storedMessages.get(indexToRemove).getMessageBody() + "\" successfully deleted.";
+            this.storedMessages.remove(indexToRemove);
+        }else {
+            result = "Cannot find message with hash: " + messageHash;
+        }
 
         return result;
     }
@@ -355,5 +386,9 @@ public class Message {
 
     public String getMessageStatus() {
         return this.messageStatus;
+    }
+
+    public void setMessageID(long messageID) {
+        this.messageID = messageID;
     }
 }

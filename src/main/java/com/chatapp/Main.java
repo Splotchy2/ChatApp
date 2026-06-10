@@ -118,14 +118,16 @@ public class Main {
                                     utilityMessage.printSentMessages();
                                     break;
                                 case 3:
-                                    while (selectedChoice != 6) {
-                                        System.out.println("Please select an option below:\n" +
+                                    while (selectedChoice != 7) {
+                                        System.out.println("\nPlease select an option below:\n" +
                                                 "1. Display the sender and recipient of all stored messages\n" +
-                                                "2. Display the longest message\n" +
+                                                "2. Display the longest stored message\n" +
                                                 "3. Search for a message\n" +
                                                 "4. Search for all messages for a particular recipient\n" +
                                                 "5. Delete a message\n" +
-                                                "6. Quit");
+                                                "6. Display a report of all stored messages\n" +
+                                                "7. Back to Menu"
+                                        );
 
                                         selectedChoice = scanner.nextInt();
                                         long messageID = 0;
@@ -133,39 +135,41 @@ public class Main {
                                         switch (selectedChoice) {
                                             case 1:
                                                 System.out.println("Displaying sender and recipient for all stored messages:\n");
-                                                utilityMessage.displayStoredMessageData(); // very long yes apologies haha
+                                                utilityMessage.displayStoredMessageData();
                                                 break;
                                             case 2:
-                                                System.out.println("The longest stored message is:\n");
+                                                System.out.println("The longest stored message is:");
 
-                                                utilityMessage.getLongestStoredMessage();
+                                                System.out.println(utilityMessage.getLongestStoredMessage());
                                                 break;
                                             case 3:
                                                 System.out.println("Please enter the message ID to search for:");
-                                                messageID = scanner.nextInt();
+                                                messageID = scanner.nextLong();
 
                                                 utilityMessage.searchForMessage(messageID);
 
                                                 break;
                                             case 4:
                                                 String recipientCell;
+                                                scanner.nextLine();
 
                                                 //gather and validate user input, if valid, set message values
                                                 do {
                                                     System.out.println("Please enter the recipient cell for message:");
                                                     recipientCell = scanner.nextLine();
 
-                                                    cellNumberValid = login.checkCellPhoneNumber(cellNumber);
+                                                    cellNumberValid = login.checkCellPhoneNumber(recipientCell);
                                                 } while (!cellNumberValid);
 
                                                 utilityMessage.getMessagesForRecipient(recipientCell);
 
                                                 break;
                                             case 5:
+                                                scanner.nextLine(); // clears the auto complete line
                                                 System.out.println("Please enter the message hash to delete:");
                                                 String messageHash = scanner.nextLine();
 
-                                                utilityMessage.deleteMessageByHash(messageHash);
+                                                System.out.println(utilityMessage.deleteMessageByHash(messageHash));
                                                 break;
                                             case 6:
                                                 System.out.println("Displaying stored message report:\n");
