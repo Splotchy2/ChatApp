@@ -8,22 +8,31 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Message {
     public long messageID;
+    @JsonIgnore
     public int numberOfMessagesSent;
     public String messageBody;
     public String recipientCell;
     public String senderCell;
     public String messageHash;
+    @JsonIgnore
     public ArrayList<Message> sentMessages        = new ArrayList<>();
+    @JsonIgnore
     public ArrayList<Message> disregardedMessages = new ArrayList<>();
+    @JsonIgnore
     public ArrayList<Message> storedMessages      = new ArrayList<>();
+    @JsonIgnore
     public ArrayList<String> messageHashes        = new ArrayList<>();
+    @JsonIgnore
     public ArrayList<Long> messageIDs             = new ArrayList<>();
     public String messageStatus; // this will hold a value determining if a message was sent, is a draft etc
-    private boolean messagesLoaded;
+    @JsonIgnore
+    public boolean messagesLoaded;
 
     public Message() {
 
@@ -36,7 +45,13 @@ public class Message {
 
     public void clearValues() {
         this.sentMessages.clear();
+        this.disregardedMessages.clear();
+        this.storedMessages.clear();
+        this.messageHashes.clear();
+        this.messageIDs.clear();
         this.numberOfMessagesSent = 0;
+
+        //deleteStoredFiles("");
     }
 
     public String createMessageID(Message newMessage) {
@@ -128,7 +143,7 @@ public class Message {
             case 2:
                 System.out.println("Press 0 to delete the message.\n");
                 result = "Press 0 to delete the message.\n"; // this line is to satisfy requirement...
-                selectedChoice = option != 0 ? option : scanner.nextInt();
+                selectedChoice = option != 0 ? 0 : scanner.nextInt();
 
                 if (selectedChoice == 0) {
                     newMessage.messageStatus = "Disregarded.\n";
@@ -205,19 +220,47 @@ public class Message {
         return false;
     }
 
+    public void deleteStoredFiles() {
+
+        //this method will delete all the previously stored files, handy in making multiple test runs easier
+
+        File dir = new File(".");
+        for (File file : dir.listFiles()) {
+            if (file.isFile()) {
+                if (file.getName().substring(file.getName().indexOf(".") + 1).equals("json")) {
+                    file.delete();
+                }
+            }
+        }
+    }
+
     private void loadStoredMessages() {
+
+        // reads in the stored json files into our arraylist
+
+        // I did not use AI for this, I referenced the ObjectMapper Javadoc and stackoverflow, so credit goes to those sources.
+
+        boolean duplicateFound;
         try {
             ObjectMapper mapper = new ObjectMapper();
 
             File dir = new File(".");
             for (File file : dir.listFiles()) {
                 if (file.isFile()) {
+                    // we only wanna process '.json' files
                     if (file.getName().substring(file.getName().indexOf(".") + 1).equals("json")) {
-                        Message storedMessage = mapper.readValue(file, Message.class);
 
-                        if (!this.storedMessages.contains(storedMessage)) {
-                            this.storedMessages.add(storedMessage);
+                        Message storedMessage = mapper.readValue(file, Message.class);
+                        duplicateFound = false;
+
+                        for (Message current : this.storedMessages) {
+                            if (current.getMessageID() == storedMessage.getMessageID()) {
+                                duplicateFound = true;
+                                break;
+                            }
                         }
+
+                        if (!duplicateFound) this.storedMessages.add(storedMessage);
                     }
                 }
             }
@@ -239,12 +282,14 @@ public class Message {
         }
     }
 
+    @JsonIgnore
     public String getLongestStoredMessage() {
         String result;
         int length = 0;
         int max = 0;
-        int index = 0;
+        int index = -1;
 
+        // if we haven't loaded the messages, then load them
         if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
@@ -257,37 +302,45 @@ public class Message {
             }
         }
 
-        result = storedMessages.get(index).getMessageBody();
+        if (index >= 0) {
+            result = storedMessages.get(index).getMessageBody();
+        }else {
+            result = "An error occurred finding the longest stored message, either there are no stored messages, or there is an issue with the message bodies.";
+        }
 
         return result;
     }
 
     public void displayStoredMessageData() {
+        // if we haven't loaded the messages, then load them
         if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
             System.out.println("========");
             System.out.println("Sender: "    + message.getSenderCell());
             System.out.println("Recipient: " + message.getRecipientCell());
-            System.out.println("========/n");
+            System.out.println("========\n");
         }
     }
 
     public void displayStoredReport() {
+        // if we haven't loaded the messages, then load them
         if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
             System.out.println("============");
             System.out.println("Message Hash: "      + message.getMessageHash());
             System.out.println("Message Recipient: " + message.getRecipientCell());
-            System.out.println("Message Hash: "      + message.getMessageBody());
+            System.out.println("Message Body: "      + message.getMessageBody());
             System.out.println("============\n");
         }
     }
 
     public String searchForMessage(long messageID) {
         String result = "";
+        boolean found = false;
 
+        // if we haven't loaded the messages, then load them
         if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
@@ -297,6 +350,22 @@ public class Message {
 
                 // print out the required values above and return the value indicated by the unit test requirement
                 result = message.getMessageBody();
+                found = true;
+                break;
+            }
+        }
+
+        // if we haven't found it in storedMessages, search in sentMessages
+        if (!found) {
+            for (Message message : this.sentMessages) {
+                if (message.getMessageID() == messageID) {
+                    System.out.println("\nRecipient: " + message.getRecipientCell());
+                    System.out.println("Message Body: " + message.getMessageBody() + "\n");
+
+                    // print out the required values above and return the value indicated by the unit test requirement
+                    result = message.getMessageBody();
+
+                }
             }
         }
 
@@ -305,8 +374,10 @@ public class Message {
         return result;
     }
 
+    @JsonIgnore
     public String getMessagesForRecipient(String recipientCell) {
 
+        // if we haven't loaded the messages, then load them
         if (!messagesLoaded) loadStoredMessages();
 
         String result = "";
@@ -327,9 +398,12 @@ public class Message {
     }
 
     public String deleteMessageByHash(String messageHash) {
+        //This method will search for a message for the given message hash, if found, it will delete it
+
         int indexToRemove = -1;
         String result = "";
 
+        // if we haven't loaded the messages, then load them
         if (!messagesLoaded) loadStoredMessages();
 
         for (Message message : this.storedMessages) {
@@ -339,6 +413,7 @@ public class Message {
         if (indexToRemove >= 0) {
             result = "Message: \"" + this.storedMessages.get(indexToRemove).getMessageBody() + "\" successfully deleted.";
             this.storedMessages.remove(indexToRemove);
+
         }else {
             result = "Cannot find message with hash: " + messageHash;
         }

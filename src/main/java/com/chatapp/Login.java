@@ -85,6 +85,8 @@ public class Login {
             result = "Cell phone number incorrectly formatted or does not contain international code.\n";
         }
 
+        System.out.println(result);
+
         return isValid;
     }
 }

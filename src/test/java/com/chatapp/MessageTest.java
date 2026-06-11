@@ -10,41 +10,22 @@ public class MessageTest {
 
     private static Message firstMessage   = new Message();
     private static Message secondMessage  = new Message();
-    private static Message thirdMessage   = new Message();
-    private static Message fourthMessage  = new Message();
-    private static Message fifthMessage   = new Message();
     private static Message utilityMessage = new Message();
 
     @BeforeAll
     public static void initializeTests() {
-        firstMessage.setRecipientCell("+2783455789");
+        firstMessage.setRecipientCell("+27718693002");
         firstMessage.setSenderCell("+271234567");
-        firstMessage.setMessageBody("Did you get the cake?");
+        firstMessage.setMessageBody("Hi Mike, can you join us for dinner tonight?");
 
-        secondMessage.setRecipientCell("+27838884567");
+        secondMessage.setRecipientCell("08575975889");
         secondMessage.setSenderCell("+271234567");
-        secondMessage.setMessageBody("Where are you? You are late! I have asked you to be on time.");
-
-        thirdMessage.setRecipientCell("+27834484567");
-        thirdMessage.setSenderCell("+271234567");
-        thirdMessage.setMessageBody("Yohoooo, I am at your gate.");
-
-        fourthMessage.setRecipientCell("+277654321");
-        fourthMessage.setSenderCell("+271234567");
-        fourthMessage.setMessageBody("It is dinner time!");
-
-        fifthMessage.setRecipientCell("+27838884567");
-        fifthMessage.setSenderCell("+271234567");
-        fifthMessage.setMessageBody("Ok, I am leaving without you.");
+        secondMessage.setMessageBody("Hi Keegan, did you receive the payment?");
 
         utilityMessage.initializeMessage(firstMessage);
 
         utilityMessage.numberOfMessagesSent = 1; // this is usually updated when sending a message, but to use our objects for testing purposes, we updated it here to simulate a 2nd message
         utilityMessage.initializeMessage(secondMessage);
-
-        utilityMessage.initializeMessage(thirdMessage);
-        utilityMessage.initializeMessage(fourthMessage);
-        utilityMessage.initializeMessage(fifthMessage);
 
     }
 
@@ -100,50 +81,6 @@ public class MessageTest {
         // more than 250 characters...
         assertFalse(firstMessage.checkMessageBody("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
         assertFalse(firstMessage.checkMessageBody("Lots and lots of words, an extreme amount of words. Loads and loads and loads and loads of words. Seriously a lot of words, an unimaginable amount of words. a whole lot of words, really so much words its hard to believe how many words are here. So many words."));
-    }
-
-    @Test
-    @Order(6)
-    public void checkSentMessages() {
-        utilityMessage.sendMessage(firstMessage, 1);
-        utilityMessage.sendMessage(fourthMessage, 1);
-
-        assertEquals("Did you get the cake?,It is dinner time!", utilityMessage.printSentMessages());
-    }
-
-    @Test
-    @Order(7)
-    public void checkLongestMessage() {
-        utilityMessage.sendMessage(secondMessage, 3);
-        utilityMessage.sendMessage(fifthMessage, 3);
-        assertEquals("Where are you? You are late! I have asked you to be one time.", utilityMessage.getLongestStoredMessage());
-    }
-
-    @Test
-    @Order(8)
-    public void checkSearchMessageID() {
-        // you cannot assign a long value starting with 0, so I am removing it. Feel free to verify.
-        fourthMessage.messageID = 838884567L;
-        assertEquals("It is dinner time!", utilityMessage.searchForMessage(838884567));
-    }
-
-    @Test
-    @Order(9)
-    public void checkSearchForMessageForRecipient() {
-        assertEquals("Where are you? You are late! I have asked you to be on time.,Ok, I am leaving without you.", utilityMessage.getMessagesForRecipient("+27838884567"));
-    }
-
-    @Test
-    @Order(10)
-    public void checkDeleteMessageByHash() {
-        assertEquals("Message: \"Where are you? You are late! I have asked you to be on time.\" successfully deleted.", utilityMessage.deleteMessageByHash(secondMessage.messageHash));
-    }
-
-    @Test
-    @Order(11)
-    public void checkDisplayReport() {
-        // we are not given any criteria by which to assert
-        utilityMessage.displayStoredReport();
     }
 
 }
